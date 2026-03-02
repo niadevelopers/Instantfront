@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api/admin";   // change to full URL in production if needed: "https://yourdomain.com/api/admin"
+const BASE_URL = "https://instantdating.onrender.com/api/admin"; 
 
 function getToken() {
     return localStorage.getItem("adminToken");
@@ -63,4 +63,5 @@ function requireAuth() {
     if (!getToken()) {
         window.location.href = "login.html";
     }
+
 }
