@@ -1,6 +1,6 @@
 
 const app = document.getElementById("app");
-const API_BASE = "https://vqv0vzmk-5000.uks1.devtunnels.ms/api";
+const API_BASE = "https://instantdating.onrender.com/api";
 
 
 const PLANS = {
@@ -1386,4 +1386,5 @@ document.addEventListener('visibilitychange', () => {
   ) {
     showInstallBanner();
   }
+
 });
