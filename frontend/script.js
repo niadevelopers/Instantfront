@@ -2,6 +2,17 @@
 const app = document.getElementById("app");
 const API_BASE = "https://instantdating.onrender.com/api";
 
+async function apiFetch(endpoint, options = {}) {
+  const res = await fetch(`${API_BASE}${endpoint}`, options); // prepend API_BASE
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Request failed");
+  }
+
+  return data;
+}
+
 
 const PLANS = {
   Premium:   { amount: 1 },
@@ -1388,3 +1399,4 @@ document.addEventListener('visibilitychange', () => {
   }
 
 });
+
