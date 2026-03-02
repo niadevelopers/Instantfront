@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Users – Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <header>
+    <div class="container">
+      <strong>Admin → Users</strong>
+      <nav style="float:right;">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="reports.html">Reports</a>
+        <a href="match.html">Match</a>
+        <a href="#" class="logout" id="logout">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>Users</h1>
+
+    <div id="usersTableContainer">
+      <p>Loading users...</p>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/helpers.js"></script>
+  <script>
+    requireAuth();
+
+    const container = document.getElementById("usersTableContainer");
+
+    async function loadUsers() {
+      try {
+       const response = await api("/users");
+if (!response || !response.success) {
+  container.innerHTML = "<p style='color:red'>Failed to load users: " + (response?.msg || "Unknown error") + "</p>";
+  return;
+}
+
+const users = response.data || [];
+
+if (users.length === 0) {
+  container.innerHTML = "<p>No users found.</p>";
+  return;
+}
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>WhatsApp</th>
+                <th>Age · Gender</th>
+                <th>Intentions</th>
+                <th>Tier</th>
+                <th>Warnings</th>
+                <th>Banned</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        users.forEach(u => {
+          const banned = u.banned?.status ? `Yes (${u.banned.reason || "?"})` : "No";
+          html += `
+            <tr>
+              <td><a href="user.html?id=${u._id}">${u.email}</a></td>
+              <td>${u.whatsapp || "—"}</td>
+              <td>${u.age || "?"} · ${u.gender || "?"}</td>
+              <td>${u.intentions || "—"}</td>
+              <td>${u.tier || "free"}</td>
+              <td>${u.warnings?.length || 0}</td>
+              <td>${banned}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" onclick="banUser('${u._id}')">Ban</button>
+                <button class="btn btn-warning btn-sm" onclick="warnUser('${u._id}')">Warn</button>
+                <button class="btn btn-secondary btn-sm" onclick="upgradeUser('${u._id}')">Upgrade</button>
+              </td>
+            </tr>
+          `;
+        });
+
+        html += "</tbody></table>";
+        container.innerHTML = html;
+      } catch (err) {
+        container.innerHTML = "<p style='color:red'>Failed to load users.</p>";
+      }
+    }
+
+    async function banUser(id) {
+      const reason = prompt("Ban reason:");
+      if (!reason) return;
+      try {
+        await api("/ban", { method: "POST", body: { userId: id, reason } });
+        showAlert("success", "User banned");
+        loadUsers();
+      } catch {}
+    }
+
+    async function warnUser(id) {
+      const warning = prompt("Warning message:");
+      if (!warning) return;
+      try {
+        await api("/warn", { method: "POST", body: { userId: id, warning } });
+        showAlert("success", "Warning added");
+        loadUsers();
+      } catch {}
+    }
+
+    async function upgradeUser(id) {
+      const plan = prompt("New plan (free/premium/elite/...):", "premium");
+      if (!plan) return;
+      try {
+        await api("/upgrade", { method: "POST", body: { userId: id, plan } });
+        showAlert("success", "Subscription upgraded");
+        loadUsers();
+      } catch {}
+    }
+
+    document.getElementById("logout").onclick = e => {
+      e.preventDefault();
+      if (confirm("Logout?")) {
+        localStorage.clear();
+        location.href = "login.html";
+      }
+    };
+
+    loadUsers();
+  </script>
+</body>
+</html>

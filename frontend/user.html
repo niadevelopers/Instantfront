@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Detail – Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <header>
+    <div class="container">
+      <strong>Admin → User Detail</strong>
+      <nav style="float:right;">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="users.html">Users</a>
+        <a href="reports.html">Reports</a>
+        <a href="match.html">Match</a>
+        <a href="#" class="logout" id="logout">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>User Detail</h1>
+
+    <div id="userCard" class="card">
+      <p>Loading user details...</p>
+    </div>
+
+    <div class="card">
+      <h3>Admin Actions</h3>
+      <button class="btn btn-danger" id="banBtn">Ban User</button>
+      <button class="btn btn-warning" id="warnBtn">Issue Warning</button>
+      <button class="btn btn-secondary" id="upgradeBtn">Upgrade Subscription</button>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/helpers.js"></script>
+  <script>
+    requireAuth();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get("id");
+
+    if (!userId) {
+      alert("No user ID provided in URL");
+      history.back();
+    }
+
+    async function loadUser() {
+      try {
+        console.log(`Fetching user with ID: ${userId}`);
+        const response = await api(`/user/${userId}`);
+
+        if (!response) {
+          throw new Error("No response from server");
+        }
+
+        if (!response.success) {
+          throw new Error(response.msg || "Failed to load user");
+        }
+
+        const user = response.data;
+        if (!user) {
+          throw new Error("User data not found in response");
+        }
+
+        console.log("User loaded successfully:", user);
+
+        document.getElementById("userCard").innerHTML = `
+          <h2>${user.email || "—"}</h2>
+          <p><strong>WhatsApp:</strong> ${user.whatsapp || "—"}</p>
+          <p><strong>Age / Gender:</strong> ${user.age || "?"} / ${user.gender || "?"}</p>
+          <p><strong>Location:</strong> ${user.location || "—"}</p>
+          <p><strong>Intentions:</strong> ${user.intentions || "—"}</p>
+          <p><strong>Tier:</strong> ${user.tier || "free"}</p>
+          <p><strong>Warnings:</strong> ${user.warnings?.join(" • ") || "None"}</p>
+          <p><strong>Banned:</strong> ${user.banned?.status ? `Yes – ${user.banned.reason || "?"}` : "No"}</p>
+          <p><strong>Joined:</strong> ${formatDate(user.createdAt) || "—"}</p>
+        `;
+
+        document.getElementById("banBtn").onclick = () => banUser(userId);
+        document.getElementById("warnBtn").onclick = () => warnUser(userId);
+        document.getElementById("upgradeBtn").onclick = () => upgradeUser(userId);
+
+      } catch (err) {
+        console.error("Load user failed:", err);
+        document.getElementById("userCard").innerHTML = 
+          `<p style="color:red">Failed to load user: ${err.message || "Unknown error"}</p>`;
+      }
+    }
+
+  
+    async function banUser(id) {
+      const reason = prompt("Enter ban reason:");
+      if (!reason) return;
+
+      try {
+        await api("/ban", { method: "POST", body: { userId: id, reason } });
+        showAlert("success", "User banned successfully");
+        loadUser(); 
+      } catch (err) {
+        showAlert("error", err.message || "Failed to ban user");
+      }
+    }
+
+    async function warnUser(id) {
+      const warning = prompt("Enter warning message:");
+      if (!warning) return;
+
+      try {
+        await api("/warn", { method: "POST", body: { userId: id, warning } });
+        showAlert("success", "Warning issued successfully");
+        loadUser();
+      } catch (err) {
+        showAlert("error", err.message || "Failed to issue warning");
+      }
+    }
+
+    async function upgradeUser(id) {
+      const plan = prompt("Enter new plan (free/premium/elite/...):", "premium");
+      if (!plan) return;
+
+      try {
+        await api("/upgrade", { method: "POST", body: { userId: id, plan } });
+        showAlert("success", `Subscription upgraded to ${plan}`);
+        loadUser();
+      } catch (err) {
+        showAlert("error", err.message || "Failed to upgrade subscription");
+      }
+    }
+
+    document.getElementById("logout").onclick = e => {
+      e.preventDefault();
+      if (confirm("Logout?")) {
+        localStorage.clear();
+        location.href = "login.html";
+      }
+    };
+    
+    loadUser();
+  </script>
+</body>
+</html>

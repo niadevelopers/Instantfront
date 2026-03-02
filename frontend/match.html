@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manual Match – Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <!-- header -->
+
+  <div class="container">
+    <h1>Force Match (Admin Tool)</h1>
+
+    <div class="card">
+      <form id="matchForm">
+        <label>User ID to match:</label>
+        <input type="text" id="userId" placeholder="Enter user _id" required />
+        <button type="submit" class="btn btn-primary">Find Match</button>
+      </form>
+    </div>
+
+    <div id="result" class="card" style="display:none;">
+      <h3>Match Result</h3>
+      <pre id="matchOutput"></pre>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    requireAuth();
+
+    document.getElementById("matchForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const userId = document.getElementById("userId").value.trim();
+      if (!userId) return alert("Enter user ID");
+
+      try {
+        const data = await api("/match", {
+          method: "POST",
+          body: { userId }
+        });
+
+        document.getElementById("result").style.display = "block";
+        document.getElementById("matchOutput").textContent = JSON.stringify(data.matchedUser, null, 2);
+      } catch {}
+    });
+  </script>
+</body>
+</html>

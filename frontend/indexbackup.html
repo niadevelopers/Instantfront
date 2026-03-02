@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intent-Based Dating Platform</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icon-180x180.png">
+
+
+</head>
+<body>
+  <main id="app">
+    <!-- SPA content injected here -->
+  </main>
+
+ <template id="login-template">
+  <div class="card glass">
+    <h2>Login</h2>
+
+    <div class="input-wrapper">
+      <input 
+        type="email" 
+        placeholder="Email" 
+        id="login-email"
+        autocomplete="email"
+        required
+      >
+    </div>
+
+    <div class="input-wrapper password-wrapper">
+      <input 
+        type="password" 
+        placeholder="Password" 
+        id="login-password"
+        autocomplete="current-password"
+        required
+      >
+      <button 
+        type="button"
+        class="toggle-visibility"
+        id="toggle-password-btn"
+        aria-label="Show password"
+        title="Show password"
+      >
+        <i class="fa fa-eye" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <button id="login-btn">Login</button>
+    <p class="toggle">Don't have an account? <span id="to-register">Register</span></p>
+  </div>
+</template>
+
+
+
+  <style>
+ 
+  @media screen and (min-width: 1024px) {
+    .card.glass {
+      max-width: 750px !important; 
+      margin: 10px auto !important; 
+      padding: 20px 30px !important; 
+    }
+
+    h2 {
+      font-size: 1.5rem !important;
+      margin-bottom: 15px !important;
+    }
+
+    #register-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 20px; 
+    }
+
+    #register-form input, 
+    #register-form select {
+      padding: 10px 12px !important; 
+      font-size: 13px !important;
+      height: 40px !important; 
+    }
+
+    #intentions, 
+    button[type="submit"],
+    .toggle {
+      grid-column: span 2;
+    }
+
+    button[type="submit"] {
+      padding: 12px !important; 
+      margin-top: 5px !important;
+    }
+
+    .toggle {
+      margin-top: 10px !important;
+      padding-bottom: 5px;
+    }
+  }
+</style>
+
+
+  <template id="register-template">
+    <div class="card glass">
+      <h2>Register</h2>
+      <form id="register-form">
+
+        <select id="gender" required>
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <input type="text" placeholder="WhatsApp Number" id="whatsapp" required>
+        <input type="email" placeholder="Email" id="email" required>
+        <input type="password" placeholder="Password" id="password" required>
+
+       <select id="location" required>
+  <option value="">Select County</option>
+  <option value="Baringo">Baringo</option>
+  <option value="Bomet">Bomet</option>
+  <option value="Bungoma">Bungoma</option>
+  <option value="Busia">Busia</option>
+  <option value="Elgeyo-Marakwet">Elgeyo-Marakwet</option>
+  <option value="Embu">Embu</option>
+  <option value="Garissa">Garissa</option>
+  <option value="Homa Bay">Homa Bay</option>
+  <option value="Isiolo">Isiolo</option>
+  <option value="Kajiado">Kajiado</option>
+  <option value="Kericho">Kericho</option>
+  <option value="Kiambu">Kiambu</option>
+  <option value="Kilifi">Kilifi</option>
+  <option value="Kirinyaga">Kirinyaga</option>
+  <option value="Kisii">Kisii</option>
+  <option value="Kisumu">Kisumu</option>
+  <option value="Kitui">Kitui</option>
+  <option value="Kwale">Kwale</option>
+  <option value="Laikipia">Laikipia</option>
+  <option value="Lamu">Lamu</option>
+  <option value="Machakos">Machakos</option>
+  <option value="Makueni">Makueni</option>
+  <option value="Mandera">Mandera</option>
+  <option value="Marsabit">Marsabit</option>
+  <option value="Meru">Meru</option>
+  <option value="Migori">Migori</option>
+  <option value="Mombasa">Mombasa</option>
+  <option value="Murang’a">Murang’a</option>
+  <option value="Nairobi">Nairobi</option>
+  <option value="Nakuru">Nakuru</option>
+  <option value="Nandi">Nandi</option>
+  <option value="Narok">Narok</option>
+  <option value="Nyamira">Nyamira</option>
+  <option value="Nyandarua">Nyandarua</option>
+  <option value="Nyeri">Nyeri</option>
+  <option value="Samburu">Samburu</option>
+  <option value="Siaya">Siaya</option>
+  <option value="Taita-Taveta">Taita-Taveta</option>
+  <option value="Tana River">Tana River</option>
+  <option value="Tharaka-Nithi">Tharaka-Nithi</option>
+  <option value="Trans-Nzoia">Trans-Nzoia</option>
+  <option value="Turkana">Turkana</option>
+  <option value="Uasin Gishu">Uasin Gishu</option>
+  <option value="Vihiga">Vihiga</option>
+  <option value="Wajir">Wajir</option>
+</select>
+
+        <select id="intentions" required>
+         <option value="">Select Intention</option>
+
+<option value="I want a serious romantic connection">
+I want a serious romantic connection
+</option>
+
+<option value="I am here to flirt and see where it leads">
+I am here to flirt and see where it leads
+</option>
+
+<option value="I’m up for casual fun and no strings">
+I’m up for casual fun and no strings
+</option>
+
+<option value="Looking for a friends-with-benefits arrangement">
+Looking for a friends-with-benefits arrangement
+</option>
+
+<option value="Open to a hot one night stand">
+Open to a hot one night stand
+</option>
+
+<option value="Into same-sex flings or connections">
+Into same-sex flings or connections
+</option>
+
+<option value="Exploring my sexual side">
+Exploring my sexual side
+</option>
+
+<option value="Curious and ready for adventure">
+Curious and ready for adventure
+</option>
+        </select>
+
+
+        <input type="number" placeholder="Age (Optional)" id="age">
+        <button type="submit">Register</button>
+      </form>
+      <p class="toggle">Already have an account? <span id="to-login">Login</span></p>
+    </div>
+  </template>
+
+  <template id="overlay-template">
+  <div id="overlay" class="overlay">
+    <div class="overlay-content glass">
+      <span id="close-overlay">&times;</span>
+      <img id="overlay-profile-img" src="" alt="Profile Image">
+      <h3 id="overlay-name"></h3>
+      <p id="overlay-intentions"></p>
+      <p id="overlay-location"></p>
+      <div id="overlay-gallery" class="gallery"></div>
+      <button id="overlay-whatsapp-btn">WhatsApp</button>
+      <button id="reportUserBtn">Report User</button>
+    </div>
+  </div>
+</template>
+
+<template id="paywall-template">
+  <div id="paywall-overlay" class="overlay">
+    <div class="overlay-content glass">
+      <span id="close-paywall">&times;</span>
+      <h3>Unlock Contact</h3>
+      <p>Select a subscription plan to unlock WhatsApp contact:</p>
+      <div class="plan-container">
+        <div class="plan-card" data-plan="Premium">
+          <h4>Premium</h4>
+          <p>20 contact clicks/day</p>
+          <p>KES 199</p>
+          <button class="pay-btn">Pay</button>
+        </div>
+        <div class="plan-card" data-plan="Legend">
+          <h4>Legend</h4>
+          <p>100 clicks/week</p>
+          <p>KES 499</p>
+          <button class="pay-btn">Pay</button>
+        </div>
+        <div class="plan-card" data-plan="Elite">
+          <h4>Elite</h4>
+          <p>Lifetime unlimited</p>
+          <p>KES 1500</p>
+          <button class="pay-btn">Pay</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<template id="profile-edit-template">
+  <div class="card glass">
+    <h2>Edit Profile</h2>
+    <form id="profile-edit-form">
+      <input type="text" placeholder="WhatsApp Number" id="edit-whatsapp">
+      <input type="email" placeholder="Email" id="edit-email">
+      <input type="number" placeholder="Age" id="edit-age">
+      <select id="edit-intentions">
+        <option value="">Select Intention</option>
+
+           <option value="I want a serious romantic connection">
+           I want a serious romantic connection
+           </option>
+
+           <option value="I am here to flirt and see where it leads">
+           I am here to flirt and see where it leads
+           </option>
+
+           <option value="I’m up for casual fun and no strings">
+           I’m up for casual fun and no strings
+           </option>
+
+           <option value="Looking for a friends-with-benefits arrangement">
+           Looking for a friends-with-benefits arrangement
+           </option>
+
+           <option value="Open to a hot one night stand">
+           Open to a hot one night stand
+           </option>
+
+           <option value="Into same-sex flings or connections">
+           Into same-sex flings or connections
+           </option>
+
+           <option value="Exploring my sexual side">
+           Exploring my sexual side
+           </option>
+
+           <option value="Curious and ready for adventure">
+           Curious and ready for adventure
+           </option>
+      </select>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+  <input type="file" id="edit-profile-image" accept="image/*">
+  <span style="color: #ff6f91; font-weight: 600; font-size: 0.95rem;">
+    ← Add profile photo
+  </span>
+</div>
+
+<div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
+  <input type="file" id="edit-gallery" accept="image/*" multiple>
+  <span style="color: #ff6f91; font-weight: 600; font-size: 0.95rem;">
+    ← Add gallery images (multiple allowed)
+  </span>
+</div>
+
+
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+</template>
+
+<div id="imagePreview" class="image-preview">
+  <span id="closePreview">&times;</span>
+  <img id="previewImg" src="" />
+</div>
+
+<footer class="floating-footer">
+  <button class="footer-btn whatsapp-btn" data-tooltip="Reach admin directly for assistance">
+    <img src="assets/images/whatsapp.jpg" alt="WhatsApp" class="footer-btn-icon">
+  </button>
+
+  <button class="footer-btn gratitude-btn" data-tooltip="Thanks to our developers">
+    <img src="assets/images/developer.jpg" alt="Gratitude" class="footer-btn-icon">
+  </button>
+
+  <button class="footer-btn guide-btn" data-tooltip="Community rules & mini tour">
+    <img src="assets/images/rules.jpg" alt="Guide" class="footer-btn-icon">
+  </button>
+
+  <button class="footer-btn tips-btn" data-tooltip="Best matches & safety tips">
+    <img src="assets/images/safety.jpg" alt="Tips" class="footer-btn-icon">
+  </button>
+</footer>
+
+<div class="tooltip" id="tooltip"></div>
+
+<div class="overlay floating-overlay" id="gratitude-overlay">
+  <div class="overlay-content glass">
+    <span class="close-overlay">&times;</span>
+    <h3>Developer Gratitude</h3>
+
+<p>
+  Our developers at 
+  <strong style="color:#ff4d8d; font-weight:700;">
+    <a href="https://niadevelopers.com" 
+       target="_blank" 
+       style="color:#ff4d8d; text-decoration:none;">
+       NiaDevelopers
+    </a>
+  </strong>
+  are working round the clock to ensure new features roll out the moment they’re ready — constantly improving performance, security, and overall experience behind the scenes.
+</p>
+  </div>
+</div>
+
+<div class="overlay floating-overlay" id="guide-overlay">
+  <div class="overlay-content glass">
+    <span class="close-overlay">&times;</span>
+    <h3>Community Guide</h3>
+    
+    <div class="overlay-slides">
+      <div class="slide active">
+        <p>Welcome! Our platform is built on mutual respect. Please keep conversations friendly and constructive at all times.</p>
+      </div>
+      <div class="slide">
+  <p><strong>Profile Authenticity:</strong> Use real photos and accurate personal information. Fake profiles or impersonation accounts are permanently banned.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Respect First:</strong> Harassment, hate speech, threats, or abusive language toward other users is strictly prohibited.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Content Standards:</strong> Explicit or nude content is not encouraged. Content deemed excessive, exploitative, or unsafe may result in warnings or bans.</p>
+</div>
+
+<div class="slide">
+  <p><strong>No Scamming:</strong> Financial requests, fraud attempts, or manipulation for money or services will lead to immediate account termination.</p>
+</div>
+
+<div class="slide">
+  <p><strong>WhatsApp Responsibility:</strong> Once redirected to WhatsApp, interactions remain your responsibility. Report misconduct immediately.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Age Compliance:</strong> Users must meet the legal age requirement. Underage accounts are removed without notice.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Spam Policy:</strong> Mass messaging, advertising, or promotional links are not allowed on the platform.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Account Security:</strong> Sharing accounts or allowing third-party access compromises safety and may result in suspension.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Respect Intentions:</strong> Misleading users about relationship intentions or identity may lead to account review.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Reporting Matters:</strong> Users are encouraged to report suspicious or harmful behavior to help keep the community safe.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Warning System:</strong> Policy violations may result in a 24-hour account suspension as an official warning.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Ban Enforcement:</strong> Serious or repeated violations lead to permanent bans and immediate account logout.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Multiple Accounts:</strong> Creating new accounts to bypass restrictions or bans is prohibited.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Privacy Protection:</strong> Do not share another user’s personal information without consent.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Community Safety:</strong> The platform reserves the right to review, restrict, or remove accounts to maintain a secure environment.</p>
+</div>
+    </div>
+
+    <div class="overlay-nav">
+      <button class="prev-btn">Back</button>
+      <span class="slide-indicator">1 / 16</span>
+      <button class="next-btn">Next</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay floating-overlay" id="tips-overlay">
+  <div class="overlay-content glass">
+    <span class="close-overlay">&times;</span>
+    <h3>Safety & Tips</h3>
+
+    <div class="overlay-slides">
+      <div class="slide active">
+        <p><strong>Verification:</strong> Always look for the verified badge. It means the user has passed our basic identity check.</p>
+      </div>
+      <div class="slide">
+  <p><strong>Save Your Login Details:</strong> Please save your email and password safely. Account recovery is currently unavailable, and lost credentials may result in permanent loss of your account.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Complete Your Profile:</strong> After creating your account, complete your profile by adding your WhatsApp number, age, intentions, profile picture, and up to three gallery photos.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Use a Real WhatsApp Number:</strong> Add an active WhatsApp number that belongs to you. This is the number other users will use to contact you.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Add Clear Photos:</strong> A profile picture is required to activate your account. You may upload a maximum of three gallery photos.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Photo Updates:</strong> Your profile picture can be changed every 3 days. Gallery photos can only be added once, so choose carefully.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Save Changes:</strong> Always press the save button after updating your profile to ensure your information is visible to others.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Account Types:</strong> Completed profiles start as Normal accounts with limited access. Subscription tiers include Premium, Legend, and Elite, each unlocking additional features.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Viewing Profiles:</strong> You can explore other users by opening their profiles to learn more about them before connecting.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Connecting on WhatsApp:</strong> Clicking the WhatsApp button redirects you directly to the user’s WhatsApp chat if your account tier allows access.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Access Restrictions:</strong> Normal accounts may encounter access limits. Upgrading your subscription removes these restrictions.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Payments:</strong> Ensure the WhatsApp number saved on your profile supports M-Pesa before making a subscription payment.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Payment Confirmation:</strong> When subscribing, you will receive a payment request on your phone. Complete the prompt to activate your selected tier.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Report Suspicious Users:</strong> Immediately report accounts involved in scams, impersonation, extortion, or misleading behavior.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Stay Safe:</strong> Avoid sharing sensitive personal or financial information with users you have just met.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Contact Admin Support:</strong> For complaints, issues, or account concerns, use the Admin support option available within the app.</p>
+</div>
+
+<div class="slide">
+  <p><strong>Community Responsibility:</strong> Respect other users and help maintain a safe, genuine, and enjoyable dating environment for everyone.</p>
+</div>
+    </div>
+
+    <div class="overlay-nav">
+      <button class="prev-btn">Back</button>
+      <span class="slide-indicator">1 / 17</span>
+      <button class="next-btn">Next</button>
+    </div>
+  </div>
+</div>
+
+  <script src="script.js"></script>
+</body>
+</html>

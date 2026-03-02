@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <header>
+    <div class="container">
+      <strong>Admin Panel</strong>
+      <nav style="float:right;">
+        <a href="users.html">Users</a>
+        <a href="reports.html">Reports</a>
+        <a href="match.html">Manual Match</a>
+        <a href="#" class="logout" id="logout">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>Welcome, Admin</h1>
+    <div class="card">
+      <h3>Quick Actions</h3>
+      <p><a href="users.html" class="btn btn-primary">Manage Users</a></p>
+      <p><a href="reports.html" class="btn btn-primary">Moderate Reports</a></p>
+      <p><a href="match.html" class="btn btn-primary">Force Match (admin tool)</a></p>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/helpers.js"></script>
+  <script>
+    requireAuth();
+
+    document.getElementById("logout").addEventListener("click", e => {
+      e.preventDefault();
+      if (confirm("Logout?")) {
+        localStorage.clear();
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+</body>
+</html>

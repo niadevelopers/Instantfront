@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "IntentDating",
+  "short_name": "Intent",
+  "description": "Connect with people who share your real intentions – serious, casual, or adventurous. Meet locals in Kenya.",
+  "start_url": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#ff9a9e",
+  "theme_color": "#ff6f91",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/assets/images/whatsapp.jpg",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/images/whatsapp.jpg",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/images/whatsapp.jpg",
+      "type": "image/png",
+      "sizes": "180x180",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/images/whatsapp.jpg",
+      "type": "image/png",
+      "sizes": "1080x1920",
+      "form_factor": "narrow",
+      "label": "Browse people by intention and location"
+    },
+    {
+      "src": "/assets/images/whatsapp.jpg",
+      "type": "image/png",
+      "sizes": "1080x1920",
+      "form_factor": "narrow",
+      "label": "View profile and send message"
+    }
+  ],
+  "categories": [
+    "dating",
+    "social",
+    "lifestyle"
+  ],
+  "dir": "ltr",
+  "lang": "en",
+  "prefer_related_applications": false,
+  "related_applications": []
+}

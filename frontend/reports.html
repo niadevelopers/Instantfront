@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reports – Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Reports</h1>
+    <div id="reportsContainer">Loading reports...</div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/helpers.js"></script>
+  <script>
+    requireAuth();
+
+    async function loadReports() {
+      try {
+        const res = await api("/reports");
+        const reports = res.data || [];
+        const container = document.getElementById("reportsContainer");
+
+        if (!reports.length) {
+          container.innerHTML = "<p>No reports yet.</p>";
+          return;
+        }
+
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>Reported</th>
+                <th>By</th>
+                <th>Reason</th>
+                <th>Date</th>
+                <th>Decision</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        reports.forEach(r => {
+          const reportedEmail = r.reported || "?";
+          const reporterEmail = r.reporter || "?";
+          const decisionText = r.decision || "Pending";
+
+          html += `
+            <tr>
+              <td>${reportedEmail}</td>
+              <td>${reporterEmail}</td>
+              <td>${r.reason || "—"}</td>
+              <td>${formatDate(r.createdAt)}</td>
+              <td>${decisionText}</td>
+              <td>
+                ${r.decision?.toLowerCase() === "pending" ? `
+                  <button class="btn btn-danger btn-sm" onclick="validate('${r._id}', 'action_taken')">Ban</button>
+                  <button class="btn btn-secondary btn-sm" onclick="validate('${r._id}', 'ignored')">Ignore</button>
+                ` : ""}
+              </td>
+            </tr>
+          `;
+        });
+
+        html += "</tbody></table>";
+        container.innerHTML = html;
+
+      } catch (err) {
+        console.error("Failed to load reports:", err);
+        document.getElementById("reportsContainer").innerHTML = "<p style='color:red'>Failed to load reports.</p>";
+      }
+    }
+
+    async function validate(reportId, action) {
+      if (!confirm(`Confirm action: ${action.toUpperCase()} ?`)) return;
+      try {
+        await api("/validate", {
+          method: "POST",
+          body: { reportId, action }
+        });
+        showAlert("success", `Report ${action}ed`);
+        loadReports();
+      } catch (err) {
+        console.error("Validation failed:", err);
+        showAlert("error", "Failed to update report");
+      }
+    }
+
+    loadReports();
+  </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 style="margin:2rem 0; text-align:center;">Admin Panel</h1>
+
+    <div class="card" style="max-width:420px; margin:0 auto;">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <input type="email" id="email" placeholder="Email" required autocomplete="email" />
+        <input type="password" id="password" placeholder="Password" required autocomplete="current-password" />
+        <button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
+      </form>
+    </div>
+
+    <div id="debugOutput" style="margin-top:2rem; padding:1rem; background:#f8f9fa; border:1px solid #dee2e6; border-radius:6px; white-space:pre-wrap; font-family:monospace; max-height:300px; overflow:auto;">
+      Debug logs will appear here...
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    const debugDiv = document.getElementById("debugOutput");
+    const form = document.getElementById("loginForm");
+    const btn = document.getElementById("loginBtn");
+
+    function log(message) {
+      console.log(message);
+      if (debugDiv) {
+        debugDiv.textContent += message + "\n";
+        debugDiv.scrollTop = debugDiv.scrollHeight;
+      }
+    }
+
+    log("→ Login page loaded");
+    log("BASE_URL from api.js: " + (typeof BASE_URL !== 'undefined' ? BASE_URL : "not defined"));
+
+    if (localStorage.getItem("adminToken")) {
+      log("Found existing adminToken → redirecting to dashboard");
+      window.location.href = "dashboard.html";
+    }
+
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      log("────────────────────────────────────────");
+      log("LOGIN ATTEMPT START");
+      log("Email: " + email);
+      log("Password length: " + (password ? password.length : 0) + " characters");
+
+      btn.disabled = true;
+      btn.textContent = "Logging in...";
+
+      try {
+        log("Calling api('/login', POST)");
+        log("Full request URL will be: " + BASE_URL + "/login");
+
+        const data = await api("/login", {
+          method: "POST",
+          body: { email, password }
+        });
+
+        log("api() call completed successfully");
+        log("Response data received:");
+        log(JSON.stringify(data, null, 2));
+
+        if (data?.token) {
+          log("Token found in response");
+          log("Token length: " + data.token.length + " characters");
+          log("Setting auth → token + email");
+
+          const adminEmail = data.admin?.email || data.email || "admin";
+          setAuth(data.token, adminEmail);
+
+          log("Stored in localStorage:");
+          log("adminToken: " + (data.token.substring(0, 20) + "... [truncated]"));
+          log("adminEmail: " + adminEmail);
+
+          log("Login appears successful → redirecting to dashboard.html");
+          window.location.href = "dashboard.html";
+        } else {
+          log("No token in response → login considered failed");
+        }
+      } catch (err) {
+        log("ERROR during login:");
+        log(err.message || err);
+        log("Full error object:");
+        log(JSON.stringify(err, null, 2));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Login";
+        log("LOGIN ATTEMPT FINISHED");
+      }
+    });
+  </script>
+</body>
+</html>
