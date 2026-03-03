@@ -1159,22 +1159,33 @@ function initPaywallButtons() {
         return customAlert("Invalid plan selected");
       }
 
-      let phone = currentUser?.whatsapp;
+      //Always prompt for M-Pesa number
+      const phone = await new Promise(resolve => {
+        customPrompt(
+          "Enter the M-Pesa phone number to pay with (07..., 01..., 254..., or +254...)",
+          value => {
+            if (!value) return resolve(null);
 
-      if (!phone) {
-        phone = await new Promise(resolve => {
-          customPrompt(
-            "Enter your M-Pesa phone number (e.g. 254712345678 or 0712345678)",
-            value => {
-              let cleaned = value?.trim().replace(/\s/g, '').replace(/^0/, '254').replace(/^\+254/, '254');
-              resolve(cleaned);
+            let cleaned = value
+              .trim()
+              .replace(/\s/g, "")  
+              .replace(/^\+/, "");  
+
+            // converts local format → 254XXXXXXXXX
+            if (cleaned.startsWith("0")) {
+              cleaned = "254" + cleaned.slice(1);
             }
-          );
-        });
 
-        if (!phone || !/^254[17]\d{8}$/.test(phone)) {
-          return customAlert("Please enter a valid Kenyan phone number starting with 2547... or 2541...");
-        }
+            resolve(cleaned);
+          }
+        );
+      });
+
+      // Validate Kenyan Safaricom numbers
+      if (!phone || !/^254[17]\d{8}$/.test(phone)) {
+        return customAlert(
+          "Please enter a valid Kenyan phone number (07..., 01..., 254..., or +254...)"
+        );
       }
 
       showLoader();
@@ -1186,15 +1197,19 @@ function initPaywallButtons() {
           body: JSON.stringify({ plan, phone })
         });
 
-        if (response.msg?.includes("STK")) {  
-          customAlert("M-Pesa prompt sent! Check your phone and enter your PIN to complete the payment.");
+        if (response.msg?.includes("STK")) {
+          customAlert(
+            "M-Pesa prompt sent! Check your phone and enter your PIN to complete the payment."
+          );
 
           startPolling(response.paymentId, plan);
         } else {
           customAlert(response.msg || "Unexpected response from server.");
         }
       } catch (err) {
-        customAlert(err.message || "Failed to initiate payment. Please try again.");
+        customAlert(
+          err.message || "Failed to initiate payment. Please try again."
+        );
       } finally {
         hideLoader();
       }
@@ -1399,6 +1414,7 @@ document.addEventListener('visibilitychange', () => {
   }
 
 });
+
 
 
 
