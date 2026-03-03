@@ -917,7 +917,7 @@ async function unlockContact(userId){
 
     const formattedName = currentUserName.charAt(0).toUpperCase() + currentUserName.slice(1);
 
-    const websiteUrl = "https://vqv0vzmk-3000.uks1.devtunnels.ms/";
+    const websiteUrl = "https://instantfront.vercel.app/";
 
 
 const messageText = 
@@ -1399,4 +1399,5 @@ document.addEventListener('visibilitychange', () => {
   }
 
 });
+
 
