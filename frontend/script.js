@@ -921,7 +921,7 @@ async function unlockContact(userId){
 
 
 const messageText = 
-  `Hi, I'm ${formattedName}! I saw you on IntentDating \n` +
+  `Hi, I'm *${formattedName}!* I saw you on IntentDating \n` +
   `${websiteUrl}\n\n` +
   `I saw your intentions in the app — that's exactly what I'm hoping to find too\n` +
   `Would love to chat and see if we vibe…`;
@@ -1399,5 +1399,6 @@ document.addEventListener('visibilitychange', () => {
   }
 
 });
+
 
 
