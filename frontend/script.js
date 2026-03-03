@@ -956,23 +956,24 @@ function promptPaywall(){
 
 function renderProfileEdit(){
   if(!profileEditTemplate) return customAlert("Edit template not found");
-  app.innerHTML=""; 
+
+  app.innerHTML = ""; 
   app.appendChild(profileEditTemplate.cloneNode(true));
 
   const MAX_GALLERY_IMAGES = 3;
   const PROFILE_COOLDOWN_DAYS = 3;
 
-  document.getElementById("edit-whatsapp").value = currentUser?.whatsapp||"";
-  document.getElementById("edit-email").value = currentUser?.email||"";
-  document.getElementById("edit-age").value = currentUser?.age||"";
-  document.getElementById("edit-intentions").value = currentUser?.intentions||"";
+  document.getElementById("edit-whatsapp").value = currentUser?.whatsapp || "";
+  document.getElementById("edit-email").value   = currentUser?.email   || "";
+  document.getElementById("edit-age").value      = currentUser?.age      || "";
+  document.getElementById("edit-intentions").value = currentUser?.intentions || "";
 
   const profileInput = document.getElementById("edit-profile-image");
   const galleryInput = document.getElementById("edit-gallery");
 
-  if(currentUser?.lastProfileImageUpdated){
+  if (currentUser?.lastProfileImageUpdated) {
     const daysPassed = (new Date() - new Date(currentUser.lastProfileImageUpdated)) / (1000 * 60 * 60 * 24);
-    if(daysPassed < PROFILE_COOLDOWN_DAYS){
+    if (daysPassed < PROFILE_COOLDOWN_DAYS) {
       profileInput.disabled = true;
       const small = document.createElement("small");
       small.style.color = "#ffc107";
@@ -982,7 +983,7 @@ function renderProfileEdit(){
   }
 
   const currentCount = currentUser?.gallery?.length || 0;
-  if(currentCount >= MAX_GALLERY_IMAGES){
+  if (currentCount >= MAX_GALLERY_IMAGES) {
     galleryInput.disabled = true;
     const small = document.createElement("small");
     small.style.color = "#dc3545";
@@ -996,7 +997,8 @@ function renderProfileEdit(){
     try {
       const profileFile = profileInput.files?.[0];
       if (profileFile && !profileInput.disabled) {
-        const fd = new FormData(); fd.append("image", profileFile);
+        const fd = new FormData(); 
+        fd.append("image", profileFile);
         const pdata = await apiFetch("/users/upload/profile", { method: "POST", body: fd });
         if (pdata.image) currentUser.profileImage = pdata.image.replace(/^http:/, 'https://');
         currentUser.lastProfileImageUpdated = new Date().toISOString();
@@ -1005,7 +1007,9 @@ function renderProfileEdit(){
       const galleryFiles = galleryInput.files;
       if (galleryFiles?.length > 0 && !galleryInput.disabled) {
         const available = MAX_GALLERY_IMAGES - currentCount;
-        if (galleryFiles.length > available) return customAlert(`You can only add ${available} more images.`);
+        if (galleryFiles.length > available) {
+          return customAlert(`You can only add ${available} more images.`);
+        }
 
         const fd = new FormData();
         for (const f of galleryFiles) fd.append("image", f);
@@ -1016,16 +1020,14 @@ function renderProfileEdit(){
       }
 
       const body = {
-        whatsapp: document.getElementById("edit-whatsapp").value.trim(),
-        email: document.getElementById("edit-email").value.trim(),
-        age: document.getElementById("edit-age").value.trim(),
+        whatsapp:   document.getElementById("edit-whatsapp").value.trim(),
+        email:      document.getElementById("edit-email").value.trim(),
+        age:        document.getElementById("edit-age").value.trim(),
         intentions: document.getElementById("edit-intentions").value.trim()
       };
-
       if (Object.values(body).some(value => value === "")) {
         return customAlert("All fields are required. Please fill in everything.");
       }
-
       await apiFetch("/users/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -1041,8 +1043,56 @@ function renderProfileEdit(){
     } finally {
       hideLoader();
     }
-});
+  });
+
+  const backButton = document.createElement("button");
+  backButton.textContent = "← Back to Home";
+  backButton.type = "button";
+  backButton.id = "edit-back-to-home";
+
+  backButton.style.cssText = `
+    display: block;
+    width: 90%;
+    max-width: 240px;
+    margin: 24px auto 32px auto;
+    padding: 12px 20px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #ffffff;
+    background:#fa577d40;
+    border: 1px solid rgba(255, 255, 255, 0.30);
+    border-radius: 12px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    transition: all 0.2s ease;
+  `;
+
+  backButton.onmouseover = () => {
+    backButton.style.background = "rgba(255, 105, 180, 0.45)";
+    backButton.style.transform = "translateY(-2px)";
+    backButton.style.boxShadow = "0 8px 25px rgba(0,0,0,0.35)";
+  };
+  backButton.onmouseout = () => {
+    backButton.style.background = "rgba(255, 105, 180, 0.25)";
+    backButton.style.transform = "translateY(0)";
+    backButton.style.boxShadow = "0 4px 15px rgba(0,0,0,0.25)";
+  };
+  backButton.onmousedown = () => {
+    backButton.style.transform = "translateY(1px)";
+  };
+  const card = document.querySelector('.card.glass');
+  if (card) {
+    card.appendChild(backButton);
+  } else {
+    app.appendChild(backButton);
+  }
+  backButton.addEventListener("click", () => {
+    renderHome();
+  });
 }
+
 
 document.querySelectorAll("img").forEach(img=>img.loading="lazy");
 
@@ -1050,8 +1100,6 @@ const tooltip = document.getElementById('tooltip');
 if (tooltip) {
   tooltip.style.zIndex = '95000'; 
 }
-
-document.querySelectorAll("img").forEach(img=>img.loading="lazy");
 
 document.querySelectorAll('.footer-btn').forEach(btn => {
   btn.addEventListener('mouseenter', () => {
@@ -1414,6 +1462,7 @@ document.addEventListener('visibilitychange', () => {
   }
 
 });
+
 
 
 
