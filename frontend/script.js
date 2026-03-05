@@ -917,7 +917,8 @@ async function unlockContact(userId){
 
     const formattedName = currentUserName.charAt(0).toUpperCase() + currentUserName.slice(1);
 
-    const websiteUrl = "https://instantfront.vercel.app/";
+    //const websiteUrl = "https://instantfront.vercel.app/";
+    const websiteUrl = "https://wedm.online";
 
 
 const messageText = 
@@ -1134,7 +1135,8 @@ document.querySelector('.whatsapp-btn')?.addEventListener('click', () => {
 
   const username = currentUser?.email?.split('@')[0] || 'Visitor';
 
-  const websiteUrl = window.location.href;
+  //const websiteUrl = window.location.href;
+  const websiteUrl = "https://wedm.online";
 
   const message = `Hello Admin, I am *${username}* reaching out from ${websiteUrl}`;
 
@@ -1462,6 +1464,7 @@ document.addEventListener('visibilitychange', () => {
   }
 
 });
+
 
 
 
