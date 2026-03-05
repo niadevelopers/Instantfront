@@ -15,9 +15,9 @@ async function apiFetch(endpoint, options = {}) {
 
 
 const PLANS = {
-  Premium:   { amount: 1 },
-  Legend: { amount: 2 },
-  Elite: { amount: 3 }
+  Premium:   { amount: 149 },
+  Legend: { amount: 199 },
+  Elite: { amount: 249 }
 };
 
 
@@ -1464,6 +1464,7 @@ document.addEventListener('visibilitychange', () => {
   }
 
 });
+
 
 
 
