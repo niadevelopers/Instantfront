@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "IntentDating",
-  "short_name": "Intent",
+  "name": "Wedm",
+  "short_name": "DM",
   "description": "Connect with people who share your real intentions – serious, casual, or adventurous. Meet locals in Kenya.",
   "start_url": "/",
   "display": "standalone",
@@ -12,19 +12,19 @@
   "scope": "/",
   "icons": [
     {
-      "src": "/assets/images/whatsapp.jpg",
+      "src": "/assets/images/android-chrome-192x192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any maskable"
     },
     {
-      "src": "/assets/images/whatsapp.jpg",
+      "src": "/assets/images/android-chrome-512x512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"
     },
     {
-      "src": "/assets/images/whatsapp.jpg",
+      "src": "/assets/images/android-chrome-192x192.png",
       "type": "image/png",
       "sizes": "180x180",
       "purpose": "any"
@@ -32,14 +32,14 @@
   ],
   "screenshots": [
     {
-      "src": "/assets/images/whatsapp.jpg",
+      "src": "/assets/images/og-image.png",
       "type": "image/png",
       "sizes": "1080x1920",
       "form_factor": "narrow",
-      "label": "Browse people by intention and location"
+      "label": "Browse people by intention or location and interact"
     },
     {
-      "src": "/assets/images/whatsapp.jpg",
+      "src": "/assets/images/og-image.png",
       "type": "image/png",
       "sizes": "1080x1920",
       "form_factor": "narrow",
@@ -48,6 +48,9 @@
   ],
   "categories": [
     "dating",
+    "relationship",
+    "hookup",
+    "escort",
     "social",
     "lifestyle"
   ],
@@ -55,4 +58,5 @@
   "lang": "en",
   "prefer_related_applications": false,
   "related_applications": []
+
 }
