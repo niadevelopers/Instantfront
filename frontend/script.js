@@ -17,7 +17,7 @@ async function apiFetch(endpoint, options = {}) {
 const PLANS = {
   Premium:   { amount: 149 },
   Legend: { amount: 199 },
-  Elite: { amount: 249 }
+  Elite: { amount: 500 }
 };
 
 
@@ -917,7 +917,7 @@ async function unlockContact(userId){
 
     const formattedName = currentUserName.charAt(0).toUpperCase() + currentUserName.slice(1);
 
-    //const websiteUrl = "https://instantfront.vercel.app/";
+    //const websiteUrl = "https://instant.vercel.app/";
     const websiteUrl = "https://wedm.online";
 
 
@@ -1209,7 +1209,6 @@ function initPaywallButtons() {
         return customAlert("Invalid plan selected");
       }
 
-      //Always prompt for M-Pesa number
       const phone = await new Promise(resolve => {
         customPrompt(
           "Enter the M-Pesa phone number to pay with (07..., 01..., 254..., or +254...)",
@@ -1220,8 +1219,7 @@ function initPaywallButtons() {
               .trim()
               .replace(/\s/g, "")  
               .replace(/^\+/, "");  
-
-            // converts local format → 254XXXXXXXXX
+            
             if (cleaned.startsWith("0")) {
               cleaned = "254" + cleaned.slice(1);
             }
@@ -1230,8 +1228,7 @@ function initPaywallButtons() {
           }
         );
       });
-
-      // Validate Kenyan Safaricom numbers
+      
       if (!phone || !/^254[17]\d{8}$/.test(phone)) {
         return customAlert(
           "Please enter a valid Kenyan phone number (07..., 01..., 254..., or +254...)"
@@ -1464,10 +1461,3 @@ document.addEventListener('visibilitychange', () => {
   }
 
 });
-
-
-
-
-
-
-
