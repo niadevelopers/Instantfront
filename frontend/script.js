@@ -1,10 +1,8 @@
-
-
 const app = document.getElementById("app");
 const API_BASE = "https://instantdating.onrender.com/api";
 
 async function apiFetch(endpoint, options = {}) {
-  const res = await fetch(`${API_BASE}${endpoint}`, options); // prepend API_BASE
+  const res = await fetch(`${API_BASE}${endpoint}`, options); 
   const data = await res.json();
 
   if (!res.ok) {
@@ -20,8 +18,6 @@ const PLANS = {
   Legend: { amount: 199 },
   Elite: { amount: 500 }
 };
-
-
 
 let currentPage = 1;
 let currentSearchParams = ""; 
@@ -52,7 +48,6 @@ closePreview?.addEventListener("click", () => {
     imagePreview.style.display = "none";
   }
 });
-
 
 const loader = document.createElement('div');
 loader.id = 'global-loader';
@@ -129,7 +124,6 @@ function customAlert(msg) {
 document.getElementById('alert-ok')?.addEventListener('click', () => {
   alertModal.style.display = 'none';
 });
-
 
 const promptModal = document.createElement('div');
 promptModal.id = 'custom-prompt';
@@ -256,10 +250,6 @@ function logout() {
   renderLogin();
 }
 
-
-
-// Ensure these functions are defined BEFORE showVerificationPaywallModal() — add them at the top of your main JS file or auth utils
-
 function removePaywall() {
   const overlay = document.getElementById("verif-paywall-overlay");
   if (overlay) overlay.remove();
@@ -280,16 +270,14 @@ function startPollingVerification() {
           "Payment successful! Welcome to the full community 🎉";
         setTimeout(() => {
           removePaywall();
-          renderHome(); // refresh UI / go home
+          renderHome(); 
         }, 2000);
       }
     } catch (err) {
       console.error("Poll error:", err);
-      // Don't alert here — silent retry
     }
-  }, 5000); // every 5 seconds
+  }, 5000);
 
-  // Timeout after 3 min
   setTimeout(() => {
     if (pollInterval) {
       clearInterval(pollInterval);
@@ -300,13 +288,6 @@ function startPollingVerification() {
   }, 180000);
 }
 
-
-
-
-// Now update showVerificationPaywallModal() pay button handler to remove the alert on catch,
-// and ensure no error if initiate succeeds but something minor fails
-
-// Inside the addEventListener for "verif-pay-btn":
 async () => {
   const phone = phoneInput.value.trim();
   if (!phone) return customAlert("Please enter your phone number");
@@ -321,7 +302,6 @@ async () => {
       body: JSON.stringify({ phone })
     });
 
-    // Log for debug
     console.log("Initiate response:", initRes);
 
     if (initRes.alreadyPaid) {
@@ -338,41 +318,25 @@ async () => {
     console.error("Initiate error:", err.message, err);
     document.getElementById("verif-status-msg").textContent = "Failed to start payment. Please try again.";
     document.getElementById("verif-pay-btn").disabled = false;
-    // Removed customAlert here — only log, as user says it succeeds backend but alerts fail
-    // If still alerts, check if apiFetch throws on non-200? Ensure backend returns 200 always on success
   }
 }
 
-
-
-// Run once on page load / app start
 async function initializeApp() {
-  // Restore auth state from localStorage if exists
   const storedToken = localStorage.getItem("authToken");
   const storedUser = localStorage.getItem("currentUser");
 
   if (storedToken && storedUser) {
     token = storedToken;
     currentUser = JSON.parse(storedUser);
-
-    // Optional: Validate token with server if you have /auth/verify or similar
-    // For now, assume it's valid (common simple setup)
-
-    // Critical: Check verification BEFORE rendering home
     const paywallShown = await checkAndShowVerificationPaywall();
 
     if (!paywallShown) {
-      renderHome();  // Only render if no paywall needed
+      renderHome();  
     }
-    // If paywallShown === true, modal is displayed; polling will call renderHome() when paid
   } else {
-    // No token → show login
     renderLogin();
   }
 }
-
-
-
 
 function renderLogin() {
   app.innerHTML = "";
@@ -396,7 +360,6 @@ function renderLogin() {
       currentUser = data.user;
       localStorage.setItem("authToken", token);
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      // NEW: Check for paywall before going home
       const paywallShown = await checkAndShowVerificationPaywall();
       if (!paywallShown) {
         renderHome();
@@ -438,28 +401,20 @@ function renderRegister() {
       currentUser = data.user;
       localStorage.setItem("authToken", token);
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      
-      // Inside register success block
-renderHome();  // start rendering home + fetchUsers()
-
-// Poll the DOM until cards appear (non-blocking)
+renderHome();  
 const waitForCards = setInterval(async () => {
   const cardsContainer = document.getElementById("cards-container");
   
   if (cardsContainer && cardsContainer.children.length > 0) {
     clearInterval(waitForCards);
     
-    // Cards are visible → now show modal
     await checkAndShowVerificationPaywall();
   }
-}, 500);  // check every 500 ms
-
-// Safety timeout: if no cards after 60 seconds, show modal anyway
+}, 500);  
 setTimeout(() => {
   clearInterval(waitForCards);
-  checkAndShowVerificationPaywall();  // fallback: show modal even if empty
+  checkAndShowVerificationPaywall(); 
 }, 60000);
-
     } catch (err) {
       customAlert(err.message || "Registration failed");
     } finally {
@@ -468,9 +423,6 @@ setTimeout(() => {
   });
 }
 
-
-
-// Call this after successful login or register
 async function checkAndShowVerificationPaywall() {
   try {
     showLoader();
@@ -479,21 +431,16 @@ async function checkAndShowVerificationPaywall() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        // Assuming apiFetch already adds Authorization: Bearer ${token} if needed
-        // If not, add: Authorization: `Bearer ${token}`
       }
     });
 
     hideLoader();
 
     if (res.hasPaidVerificationFee === true) {
-      // Already paid → proceed normally
-      return false; // no paywall shown
+      return false; 
     }
-
-    // Not paid → show modal
     showVerificationPaywallModal();
-    return true; // paywall shown
+    return true; 
   } catch (err) {
     hideLoader();
     console.error("Verification status check failed:", err);
@@ -502,11 +449,7 @@ async function checkAndShowVerificationPaywall() {
   }
 }
 
-
-
-
 function showVerificationPaywallModal() {
-  // Prevent multiple modals
   if (document.getElementById("verif-paywall-overlay")) return;
 
   const overlay = document.createElement("div");
@@ -516,10 +459,8 @@ function showVerificationPaywallModal() {
     background: rgba(0,0,0,0.6); z-index: 9999;
     display: flex; align-items: center; justify-content: center;
   `;
-
-  // Prevent dismiss on outside click
   overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) e.stopPropagation(); // do nothing
+    if (e.target === overlay) e.stopPropagation();
   });
 
   const card = document.createElement("div");
@@ -544,18 +485,15 @@ function showVerificationPaywallModal() {
     </button>
 
     <p id="verif-status-msg" style="color:#666; font-size:0.95rem; min-height:1.2rem;"></p>
-  `;  // Removed close button
+  `;  
 
   overlay.appendChild(card);
   document.body.appendChild(overlay);
 
-  // Pre-fill phone if available
   const phoneInput = document.getElementById("verif-phone");
   if (currentUser?.whatsapp) {
     phoneInput.value = currentUser.whatsapp;
   }
-
-  // Pay button handler (unchanged)
   document.getElementById("verif-pay-btn").addEventListener("click", async () => {
     const phone = phoneInput.value.trim();
     if (!phone) return customAlert("Please enter your phone number");
@@ -711,6 +649,10 @@ Exploring my sexual side
 <option value="Curious and ready for adventure">
 Curious and ready for adventure
 </option>
+
+ <option value="I provide relaxing massage – additional relaxation possible">
+  I provide relaxing massage – additional relaxation possible
+</option>
           </select>
 
           <select id="search-location"><option value="">Select County</option>
@@ -800,8 +742,6 @@ function renderCards(users) {
      <span class="card-tier-tag ${user.tier?.toLowerCase() || 'unknown'}">
   ${user.tier ? user.tier.toUpperCase() : ''}
 </span>
-
-
       </div>
       <div class="card-info">
         <!-- This is the line that was wrong -->
@@ -864,8 +804,6 @@ async function fetchUsers(page = 1) {
   }
   finally { hideLoader(); }
 }
-
-
 
 function renderPagination(totalPages, current) {
   if (!document.getElementById("pagination-styles")) {
@@ -1153,7 +1091,6 @@ if (locEl) {
   }
 }
 
-
 async function unlockContact(userId){
   showLoader();
   try{
@@ -1179,10 +1116,7 @@ async function unlockContact(userId){
     const currentUserName = currentUser?.email?.split('@')[0] || 'someone';
 
     const formattedName = currentUserName.charAt(0).toUpperCase() + currentUserName.slice(1);
-
-    //const websiteUrl = "https://instant.vercel.app/";
     const websiteUrl = "https://wedm.online";
-
 
 const messageText = 
   `Hi, I'm *${formattedName}!* I saw you on IntentDating \n` +
@@ -1410,8 +1344,6 @@ document.querySelector('.whatsapp-btn')?.addEventListener('click', () => {
   window.open(url, '_blank');
 });
 
-
-
 document.querySelectorAll('.overlay').forEach(overlay => {
   const slides = overlay.querySelectorAll('.slide');
   const nextBtn = overlay.querySelector('.next-btn');
@@ -1548,8 +1480,6 @@ function startPolling(paymentId, plan) {
         paywallOverlay?.classList.remove("active");
 
         await refreshCurrentUser();
-
-        
       } 
       else if (data.status === "failed" || attempts >= maxAttempts) {
         clearInterval(pollingInterval);
@@ -1608,7 +1538,6 @@ function isInstalledPWA() {
     ('standalone' in navigator && navigator.standalone === true)
   );
 }
-
 
 function showInstallBanner() {
   if (!deferredPrompt) return;
@@ -1727,3 +1656,4 @@ document.addEventListener('visibilitychange', () => {
 
 // Start the app
 initializeApp();
+
