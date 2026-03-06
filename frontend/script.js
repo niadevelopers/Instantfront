@@ -256,6 +256,123 @@ function logout() {
 }
 
 
+
+// Ensure these functions are defined BEFORE showVerificationPaywallModal() — add them at the top of your main JS file or auth utils
+
+function removePaywall() {
+  const overlay = document.getElementById("verif-paywall-overlay");
+  if (overlay) overlay.remove();
+}
+
+let pollInterval = null;
+function startPollingVerification() {
+  if (pollInterval) clearInterval(pollInterval);
+
+  pollInterval = setInterval(async () => {
+    try {
+      const status = await apiFetch("/users/verification/status", { method: "GET" });
+
+      if (status.hasPaidVerificationFee === true) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+        document.getElementById("verif-status-msg").innerHTML = 
+          "Payment successful! Welcome to the full community 🎉";
+        setTimeout(() => {
+          removePaywall();
+          renderHome(); // refresh UI / go home
+        }, 2000);
+      }
+    } catch (err) {
+      console.error("Poll error:", err);
+      // Don't alert here — silent retry
+    }
+  }, 5000); // every 5 seconds
+
+  // Timeout after 3 min
+  setTimeout(() => {
+    if (pollInterval) {
+      clearInterval(pollInterval);
+      document.getElementById("verif-status-msg").innerHTML += 
+        "<br><br>Still waiting? Refresh the page or try again.";
+      document.getElementById("verif-pay-btn").disabled = false;
+    }
+  }, 180000);
+}
+
+
+
+
+// Now update showVerificationPaywallModal() pay button handler to remove the alert on catch,
+// and ensure no error if initiate succeeds but something minor fails
+
+// Inside the addEventListener for "verif-pay-btn":
+async () => {
+  const phone = phoneInput.value.trim();
+  if (!phone) return customAlert("Please enter your phone number");
+
+  document.getElementById("verif-status-msg").textContent = "Initiating payment...";
+  document.getElementById("verif-pay-btn").disabled = true;
+
+  try {
+    const initRes = await apiFetch("/users/verification/initiate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone })
+    });
+
+    // Log for debug
+    console.log("Initiate response:", initRes);
+
+    if (initRes.alreadyPaid) {
+      removePaywall();
+      customAlert("You're already verified!");
+      return;
+    }
+
+    document.getElementById("verif-status-msg").innerHTML = 
+      "STK push sent! <br>Check your phone and complete the 20 KES payment.<br><small>(We'll detect completion automatically)</small>";
+
+    startPollingVerification();
+  } catch (err) {
+    console.error("Initiate error:", err.message, err);
+    document.getElementById("verif-status-msg").textContent = "Failed to start payment. Please try again.";
+    document.getElementById("verif-pay-btn").disabled = false;
+    // Removed customAlert here — only log, as user says it succeeds backend but alerts fail
+    // If still alerts, check if apiFetch throws on non-200? Ensure backend returns 200 always on success
+  }
+}
+
+
+
+// Run once on page load / app start
+async function initializeApp() {
+  // Restore auth state from localStorage if exists
+  const storedToken = localStorage.getItem("authToken");
+  const storedUser = localStorage.getItem("currentUser");
+
+  if (storedToken && storedUser) {
+    token = storedToken;
+    currentUser = JSON.parse(storedUser);
+
+    // Optional: Validate token with server if you have /auth/verify or similar
+    // For now, assume it's valid (common simple setup)
+
+    // Critical: Check verification BEFORE rendering home
+    const paywallShown = await checkAndShowVerificationPaywall();
+
+    if (!paywallShown) {
+      renderHome();  // Only render if no paywall needed
+    }
+    // If paywallShown === true, modal is displayed; polling will call renderHome() when paid
+  } else {
+    // No token → show login
+    renderLogin();
+  }
+}
+
+
+
+
 function renderLogin() {
   app.innerHTML = "";
   app.appendChild(loginTemplate.cloneNode(true));
@@ -278,7 +395,11 @@ function renderLogin() {
       currentUser = data.user;
       localStorage.setItem("authToken", token);
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      renderHome();
+      // NEW: Check for paywall before going home
+      const paywallShown = await checkAndShowVerificationPaywall();
+      if (!paywallShown) {
+        renderHome();
+      }
     } catch (err) {
       customAlert(err.message || "Login failed");
     } finally {
@@ -316,11 +437,152 @@ function renderRegister() {
       currentUser = data.user;
       localStorage.setItem("authToken", token);
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      renderHome();
+      
+      // Inside register success block
+renderHome();  // start rendering home + fetchUsers()
+
+// Poll the DOM until cards appear (non-blocking)
+const waitForCards = setInterval(async () => {
+  const cardsContainer = document.getElementById("cards-container");
+  
+  if (cardsContainer && cardsContainer.children.length > 0) {
+    clearInterval(waitForCards);
+    
+    // Cards are visible → now show modal
+    await checkAndShowVerificationPaywall();
+  }
+}, 500);  // check every 500 ms
+
+// Safety timeout: if no cards after 60 seconds, show modal anyway
+setTimeout(() => {
+  clearInterval(waitForCards);
+  checkAndShowVerificationPaywall();  // fallback: show modal even if empty
+}, 60000);
+
     } catch (err) {
       customAlert(err.message || "Registration failed");
     } finally {
       hideLoader();
+    }
+  });
+}
+
+
+
+// Call this after successful login or register
+async function checkAndShowVerificationPaywall() {
+  try {
+    showLoader();
+
+    const res = await apiFetch("/users/verification/status", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        // Assuming apiFetch already adds Authorization: Bearer ${token} if needed
+        // If not, add: Authorization: `Bearer ${token}`
+      }
+    });
+
+    hideLoader();
+
+    if (res.hasPaidVerificationFee === true) {
+      // Already paid → proceed normally
+      return false; // no paywall shown
+    }
+
+    // Not paid → show modal
+    showVerificationPaywallModal();
+    return true; // paywall shown
+  } catch (err) {
+    hideLoader();
+    console.error("Verification status check failed:", err);
+    customAlert("Could not check verification status. Please try again.");
+    return false;
+  }
+}
+
+
+
+
+function showVerificationPaywallModal() {
+  // Prevent multiple modals
+  if (document.getElementById("verif-paywall-overlay")) return;
+
+  const overlay = document.createElement("div");
+  overlay.id = "verif-paywall-overlay";
+  overlay.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+  `;
+
+  // Prevent dismiss on outside click
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) e.stopPropagation(); // do nothing
+  });
+
+  const card = document.createElement("div");
+  card.style.cssText = `
+    background: white; padding: 2rem; border-radius: 12px; max-width: 420px;
+    width: 90%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  `;
+
+  card.innerHTML = `
+    <h2 style="margin-top:0; color:#333;">One-Time Verification Required</h2>
+    <p style="color:#555; line-height:1.5;">
+      To access profiles and images, we require a small one-time verification fee of <strong>20 KES</strong>.<br><br>
+      This confirms you're genuine and serious about this community. Once paid, you'll never see this again.
+    </p>
+
+    <input type="tel" id="verif-phone" placeholder="Your phone number (e.g. 0712345678)"
+      style="width:100%; padding:0.8rem; margin:1.5rem 0; border:1px solid #ccc; border-radius:6px; font-size:1rem;" />
+
+    <button id="verif-pay-btn" style="background:#ff69b4; color:white; border:none; padding:0.9rem 2rem;
+      border-radius:6px; font-size:1.1rem; cursor:pointer; width:100%; margin-bottom:1rem;">
+      Pay 20 KES Now
+    </button>
+
+    <p id="verif-status-msg" style="color:#666; font-size:0.95rem; min-height:1.2rem;"></p>
+  `;  // Removed close button
+
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  // Pre-fill phone if available
+  const phoneInput = document.getElementById("verif-phone");
+  if (currentUser?.whatsapp) {
+    phoneInput.value = currentUser.whatsapp;
+  }
+
+  // Pay button handler (unchanged)
+  document.getElementById("verif-pay-btn").addEventListener("click", async () => {
+    const phone = phoneInput.value.trim();
+    if (!phone) return customAlert("Please enter your phone number");
+
+    document.getElementById("verif-status-msg").textContent = "Initiating payment...";
+    document.getElementById("verif-pay-btn").disabled = true;
+
+    try {
+      const initRes = await apiFetch("/users/verification/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone })
+      });
+
+      if (initRes.alreadyPaid) {
+        removePaywall();
+        customAlert("You're already verified!");
+        return;
+      }
+
+      document.getElementById("verif-status-msg").innerHTML = 
+        "STK push sent! <br>Check your phone and complete the 20 KES payment.";
+
+      startPollingVerification();
+    } catch (err) {
+      document.getElementById("verif-status-msg").textContent = err.message || "Failed to start payment";
+      document.getElementById("verif-pay-btn").disabled = false;
+      customAlert("Payment initiation failed. Try again.");
     }
   });
 }
@@ -1461,3 +1723,6 @@ document.addEventListener('visibilitychange', () => {
   }
 
 });
+
+// Start the app
+initializeApp();
