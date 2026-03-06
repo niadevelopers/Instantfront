@@ -833,11 +833,11 @@ function renderCards(users) {
       </div>
       <div class="card-info">
         <!-- This is the line that was wrong -->
-        <h3>${user.email?.split('@')[0] || user.name || 'User'}</h3>
+        <h3>${user.email?.split('@')[0] || user.name}</h3>
         
         <!-- Better alternatives (uncomment one): -->
-        <!-- <h3>${user.name || user.username || user.email?.split('@')[0] || 'User'}</h3> -->
-        <!-- <h3>${user.displayName || user.name || 'No name'}</h3> -->
+        <!-- <h3>${user.name || user.username || user.email?.split('@')[0]}</h3> -->
+        <!-- <h3>${user.displayName || user.name}</h3> -->
 
         <p>${user.intentions || '?'}</p>
 
@@ -1708,3 +1708,4 @@ document.addEventListener('visibilitychange', () => {
 
 // Start the app
 initializeApp();
+
