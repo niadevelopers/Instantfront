@@ -570,7 +570,7 @@ function renderHome() {
     }
   }
 
-  const hasProfileImage = currentUser?.profileImage && !currentUser.profileImage.includes('default-profile.png');
+  const hasProfileImage = currentUser?.profileImage && !currentUser.profileImage.includes('/assets/images/default.png');
   const hasGalleryImages = Array.isArray(currentUser?.gallery) && currentUser.gallery.length > 0;
   const showCompleteProfileBanner = !hasProfileImage && !hasGalleryImages;
 
@@ -585,7 +585,7 @@ function renderHome() {
   app.innerHTML = `
     <nav class="navbar glass pinkish">
       <div class="logo">IntentDating</div>
-      <img id="profile-pic-trigger" src="${currentUser?.profileImage?.replace(/^http:/,'https://') || 'default.png'}" 
+      <img id="profile-pic-trigger" src="${currentUser?.profileImage?.replace(/^http:/,'https://') || '/assets/images/default.png'}" 
            class="profile-pic-nav">
     </nav>
 
@@ -1656,5 +1656,6 @@ document.addEventListener('visibilitychange', () => {
 
 // Start the app
 initializeApp();
+
 
 
