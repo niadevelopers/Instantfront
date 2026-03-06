@@ -14,7 +14,7 @@ async function apiFetch(endpoint, options = {}) {
 
 
 const PLANS = {
-  Premium:   { amount: 1 },
+  Premium:   { amount: 149 },
   Legend: { amount: 199 },
   Elite: { amount: 500 }
 };
@@ -1656,6 +1656,7 @@ document.addEventListener('visibilitychange', () => {
 
 // Start the app
 initializeApp();
+
 
 
 
