@@ -2,22 +2,11 @@
 const app = document.getElementById("app");
 const API_BASE = "https://instantdating.onrender.com/api";
 
-async function apiFetch(endpoint, options = {}) {
-  const res = await fetch(`${API_BASE}${endpoint}`, options); // prepend API_BASE
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || "Request failed");
-  }
-
-  return data;
-}
-
 
 const PLANS = {
-  Premium:   { amount: 149 },
-  Legend: { amount: 199 },
-  Elite: { amount: 500 }
+  Premium:   { amount: 1 },
+  Legend: { amount: 2 },
+  Elite: { amount: 3 }
 };
 
 
@@ -257,6 +246,9 @@ function logout() {
 
 
 
+
+
+
 // Ensure these functions are defined BEFORE showVerificationPaywallModal() — add them at the top of your main JS file or auth utils
 
 function removePaywall() {
@@ -298,9 +290,6 @@ function startPollingVerification() {
     }
   }, 180000);
 }
-
-
-
 
 // Now update showVerificationPaywallModal() pay button handler to remove the alert on catch,
 // and ensure no error if initiate succeeds but something minor fails
@@ -344,6 +333,21 @@ async () => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Run once on page load / app start
 async function initializeApp() {
   // Restore auth state from localStorage if exists
@@ -373,6 +377,10 @@ async function initializeApp() {
 
 
 
+
+
+
+
 function renderLogin() {
   app.innerHTML = "";
   app.appendChild(loginTemplate.cloneNode(true));
@@ -395,6 +403,7 @@ function renderLogin() {
       currentUser = data.user;
       localStorage.setItem("authToken", token);
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
       // NEW: Check for paywall before going home
       const paywallShown = await checkAndShowVerificationPaywall();
       if (!paywallShown) {
@@ -437,8 +446,8 @@ function renderRegister() {
       currentUser = data.user;
       localStorage.setItem("authToken", token);
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      
-      // Inside register success block
+
+// Inside register success block
 renderHome();  // start rendering home + fetchUsers()
 
 // Poll the DOM until cards appear (non-blocking)
@@ -459,6 +468,7 @@ setTimeout(() => {
   checkAndShowVerificationPaywall();  // fallback: show modal even if empty
 }, 60000);
 
+
     } catch (err) {
       customAlert(err.message || "Registration failed");
     } finally {
@@ -466,6 +476,14 @@ setTimeout(() => {
     }
   });
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -500,10 +518,6 @@ async function checkAndShowVerificationPaywall() {
     return false;
   }
 }
-
-
-
-
 function showVerificationPaywallModal() {
   // Prevent multiple modals
   if (document.getElementById("verif-paywall-overlay")) return;
@@ -586,6 +600,21 @@ function showVerificationPaywallModal() {
     }
   });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 async function refreshCurrentUser() {
@@ -1179,8 +1208,7 @@ async function unlockContact(userId){
 
     const formattedName = currentUserName.charAt(0).toUpperCase() + currentUserName.slice(1);
 
-    //const websiteUrl = "https://instant.vercel.app/";
-    const websiteUrl = "https://wedm.online";
+    const websiteUrl = "https://vqv0vzmk-3000.uks1.devtunnels.ms/";
 
 
 const messageText = 
@@ -1219,24 +1247,23 @@ function promptPaywall(){
 
 function renderProfileEdit(){
   if(!profileEditTemplate) return customAlert("Edit template not found");
-
-  app.innerHTML = ""; 
+  app.innerHTML=""; 
   app.appendChild(profileEditTemplate.cloneNode(true));
 
   const MAX_GALLERY_IMAGES = 3;
   const PROFILE_COOLDOWN_DAYS = 3;
 
-  document.getElementById("edit-whatsapp").value = currentUser?.whatsapp || "";
-  document.getElementById("edit-email").value   = currentUser?.email   || "";
-  document.getElementById("edit-age").value      = currentUser?.age      || "";
-  document.getElementById("edit-intentions").value = currentUser?.intentions || "";
+  document.getElementById("edit-whatsapp").value = currentUser?.whatsapp||"";
+  document.getElementById("edit-email").value = currentUser?.email||"";
+  document.getElementById("edit-age").value = currentUser?.age||"";
+  document.getElementById("edit-intentions").value = currentUser?.intentions||"";
 
   const profileInput = document.getElementById("edit-profile-image");
   const galleryInput = document.getElementById("edit-gallery");
 
-  if (currentUser?.lastProfileImageUpdated) {
+  if(currentUser?.lastProfileImageUpdated){
     const daysPassed = (new Date() - new Date(currentUser.lastProfileImageUpdated)) / (1000 * 60 * 60 * 24);
-    if (daysPassed < PROFILE_COOLDOWN_DAYS) {
+    if(daysPassed < PROFILE_COOLDOWN_DAYS){
       profileInput.disabled = true;
       const small = document.createElement("small");
       small.style.color = "#ffc107";
@@ -1246,7 +1273,7 @@ function renderProfileEdit(){
   }
 
   const currentCount = currentUser?.gallery?.length || 0;
-  if (currentCount >= MAX_GALLERY_IMAGES) {
+  if(currentCount >= MAX_GALLERY_IMAGES){
     galleryInput.disabled = true;
     const small = document.createElement("small");
     small.style.color = "#dc3545";
@@ -1260,8 +1287,7 @@ function renderProfileEdit(){
     try {
       const profileFile = profileInput.files?.[0];
       if (profileFile && !profileInput.disabled) {
-        const fd = new FormData(); 
-        fd.append("image", profileFile);
+        const fd = new FormData(); fd.append("image", profileFile);
         const pdata = await apiFetch("/users/upload/profile", { method: "POST", body: fd });
         if (pdata.image) currentUser.profileImage = pdata.image.replace(/^http:/, 'https://');
         currentUser.lastProfileImageUpdated = new Date().toISOString();
@@ -1270,9 +1296,7 @@ function renderProfileEdit(){
       const galleryFiles = galleryInput.files;
       if (galleryFiles?.length > 0 && !galleryInput.disabled) {
         const available = MAX_GALLERY_IMAGES - currentCount;
-        if (galleryFiles.length > available) {
-          return customAlert(`You can only add ${available} more images.`);
-        }
+        if (galleryFiles.length > available) return customAlert(`You can only add ${available} more images.`);
 
         const fd = new FormData();
         for (const f of galleryFiles) fd.append("image", f);
@@ -1283,14 +1307,16 @@ function renderProfileEdit(){
       }
 
       const body = {
-        whatsapp:   document.getElementById("edit-whatsapp").value.trim(),
-        email:      document.getElementById("edit-email").value.trim(),
-        age:        document.getElementById("edit-age").value.trim(),
+        whatsapp: document.getElementById("edit-whatsapp").value.trim(),
+        email: document.getElementById("edit-email").value.trim(),
+        age: document.getElementById("edit-age").value.trim(),
         intentions: document.getElementById("edit-intentions").value.trim()
       };
+
       if (Object.values(body).some(value => value === "")) {
         return customAlert("All fields are required. Please fill in everything.");
       }
+
       await apiFetch("/users/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -1306,56 +1332,8 @@ function renderProfileEdit(){
     } finally {
       hideLoader();
     }
-  });
-
-  const backButton = document.createElement("button");
-  backButton.textContent = "← Back to Home";
-  backButton.type = "button";
-  backButton.id = "edit-back-to-home";
-
-  backButton.style.cssText = `
-    display: block;
-    width: 90%;
-    max-width: 240px;
-    margin: 24px auto 32px auto;
-    padding: 12px 20px;
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: #ffffff;
-    background:#fa577d40;
-    border: 1px solid rgba(255, 255, 255, 0.30);
-    border-radius: 12px;
-    cursor: pointer;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-    transition: all 0.2s ease;
-  `;
-
-  backButton.onmouseover = () => {
-    backButton.style.background = "rgba(255, 105, 180, 0.45)";
-    backButton.style.transform = "translateY(-2px)";
-    backButton.style.boxShadow = "0 8px 25px rgba(0,0,0,0.35)";
-  };
-  backButton.onmouseout = () => {
-    backButton.style.background = "rgba(255, 105, 180, 0.25)";
-    backButton.style.transform = "translateY(0)";
-    backButton.style.boxShadow = "0 4px 15px rgba(0,0,0,0.25)";
-  };
-  backButton.onmousedown = () => {
-    backButton.style.transform = "translateY(1px)";
-  };
-  const card = document.querySelector('.card.glass');
-  if (card) {
-    card.appendChild(backButton);
-  } else {
-    app.appendChild(backButton);
-  }
-  backButton.addEventListener("click", () => {
-    renderHome();
-  });
+});
 }
-
 
 document.querySelectorAll("img").forEach(img=>img.loading="lazy");
 
@@ -1363,6 +1341,8 @@ const tooltip = document.getElementById('tooltip');
 if (tooltip) {
   tooltip.style.zIndex = '95000'; 
 }
+
+document.querySelectorAll("img").forEach(img=>img.loading="lazy");
 
 document.querySelectorAll('.footer-btn').forEach(btn => {
   btn.addEventListener('mouseenter', () => {
@@ -1397,8 +1377,7 @@ document.querySelector('.whatsapp-btn')?.addEventListener('click', () => {
 
   const username = currentUser?.email?.split('@')[0] || 'Visitor';
 
-  //const websiteUrl = window.location.href;
-  const websiteUrl = "https://wedm.online";
+  const websiteUrl = window.location.href;
 
   const message = `Hello Admin, I am *${username}* reaching out from ${websiteUrl}`;
 
@@ -1471,6 +1450,7 @@ function initPaywallButtons() {
         return customAlert("Invalid plan selected");
       }
 
+      // ✅ Always prompt for M-Pesa number
       const phone = await new Promise(resolve => {
         customPrompt(
           "Enter the M-Pesa phone number to pay with (07..., 01..., 254..., or +254...)",
@@ -1479,9 +1459,10 @@ function initPaywallButtons() {
 
             let cleaned = value
               .trim()
-              .replace(/\s/g, "")  
-              .replace(/^\+/, "");  
-            
+              .replace(/\s/g, "")   // remove spaces
+              .replace(/^\+/, "");  // remove leading +
+
+            // convert local format → 254XXXXXXXXX
             if (cleaned.startsWith("0")) {
               cleaned = "254" + cleaned.slice(1);
             }
@@ -1490,7 +1471,8 @@ function initPaywallButtons() {
           }
         );
       });
-      
+
+      // ✅ Validate Kenyan Safaricom numbers
       if (!phone || !/^254[17]\d{8}$/.test(phone)) {
         return customAlert(
           "Please enter a valid Kenyan phone number (07..., 01..., 254..., or +254...)"
@@ -1721,8 +1703,8 @@ document.addEventListener('visibilitychange', () => {
   ) {
     showInstallBanner();
   }
-
 });
+
 
 // Start the app
 initializeApp();
