@@ -7,10 +7,6 @@
   const OWN_AVATAR_SELECTORS      = [
     '#userProfileImage',               
     '#current-user-avatar img',        
-    '.navbar .user-avatar img'
-    'img[data-user-id="current"]',
-    '.header-avatar img',             
-    '.sidebar-user-photo img'          
   ];
 
   function isDefaultImage(img) {
