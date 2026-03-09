@@ -40,8 +40,8 @@
     overlay.innerHTML = `
       <div class="enforce-backdrop"></div>
       <div class="enforce-modal">
-        <h2>One more step!</h2>
-        <p>To start matching and chatting, please upload a real profile picture.</p>
+        <h2>Complete Your Profile</h2>
+        <p>Profiles with real photos get noticed and matched faster. Add yours now.</p>
         <button id="enforce-go-to-edit">Upload Photo Now</button>
       </div>
     `;
