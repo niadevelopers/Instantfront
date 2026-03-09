@@ -2,8 +2,8 @@
 
   const DEFAULT_SRC_ENDS_WITH     = "default.png";
   const DEFAULT_SRC_PARTIAL       = "/assets/images/default.png";
-  const INITIAL_DELAY_MS          = 10_000;    
-  const RECHECK_EVERY_MS          = 10_000;   
+  const INITIAL_DELAY_MS          = 20_000;    
+  const RECHECK_EVERY_MS          = 25_000;   
   const OWN_AVATAR_SELECTORS      = [
     '#userProfileImage',               
     '#current-user-avatar img',        
