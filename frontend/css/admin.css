@@ -11,7 +11,7 @@ body {
   line-height: 1.5;
 }
 
-/* premium font import */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
 
 .container {
@@ -20,7 +20,7 @@ body {
   padding: 2rem;
 }
 
-/* header — elevated, refined dark */
+
 header {
   background: #0a2640;
   color: white;
@@ -101,7 +101,7 @@ nav .logout::after {
   display: none;
 }
 
-/* welcome heading */
+
 .container > h1 {
   font-size: 2.2rem;
   font-weight: 600;
@@ -113,7 +113,7 @@ nav .logout::after {
   margin-bottom: 0.5rem;
 }
 
-/* card redesign — spacious, airy, premium */
+
 .card {
   background: #ffffff;
   border: none;
@@ -144,7 +144,7 @@ nav .logout::after {
   margin-bottom: 0;
 }
 
-/* button system — refined, modern */
+
 .btn {
   display: inline-block;
   padding: 0.7rem 1.6rem;
@@ -198,7 +198,7 @@ nav .logout::after {
   background: #5a6268;
 }
 
-/* table styling — clean, executive */
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -232,7 +232,7 @@ tr:hover td {
   background: #fafcff;
 }
 
-/* alert system — softer, modern */
+
 .alert {
   padding: 1rem 1.3rem;
   margin: 1.2rem 0;
@@ -253,7 +253,7 @@ tr:hover td {
   border-left-color: #28a745;
 }
 
-/* form elements — premium touch */
+
 form {
   display: grid;
   gap: 1.3rem;
@@ -284,19 +284,18 @@ label {
   margin-bottom: -0.5rem;
 }
 
-/* logout link special (in header already handled, but keeping your class) */
+
 .logout {
   color: #dc3545;
   font-weight: 600;
 }
 
-/* extra polish for quick actions layout inside card */
 .card p .btn {
   min-width: 180px;
   text-align: center;
 }
 
-/* responsive tweaks */
+
 @media (max-width: 768px) {
   .container {
     padding: 1.2rem;
@@ -325,7 +324,7 @@ label {
   }
 }
 
-/* subtle scrollbar */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
