@@ -1,58 +1,346 @@
-* { box-sizing: border-box; margin:0; padding:0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  font-family: system-ui, sans-serif;
-  background: #f8f9fa;
-  color: #333;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+  background: #f1f4f9;
+  color: #1e2f3e;
   line-height: 1.5;
 }
-.container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
-header {
-  background: #1a3c66;
-  color: white;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
+
+/* premium font import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
 }
-nav a {
+
+/* header — elevated, refined dark */
+header {
+  background: #0a2640;
   color: white;
-  margin-right: 1.5rem;
+  padding: 0;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
+header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+header strong {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  background: linear-gradient(135deg, #ffffff 0%, #c8dfef 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+nav {
+  float: none !important;
+}
+
+nav a {
+  color: #e2edf7;
+  margin-right: 1.8rem;
   text-decoration: none;
   font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  position: relative;
 }
-nav a:hover { text-decoration: underline; }
-.btn {
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.95rem;
+
+nav a:hover {
+  color: white;
+  text-decoration: none;
 }
-.btn-primary  { background: #0d6efd; color: white; }
-.btn-danger   { background: #dc3545; color: white; }
-.btn-warning  { background: #ffc107; color: black; }
-.btn-secondary{ background: #6c757d; color: white; }
+
+nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #5b9bd5;
+  transition: width 0.2s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+nav .logout {
+  color: #ffb5b5;
+  font-weight: 600;
+  background: rgba(220, 53, 69, 0.12);
+  padding: 0.4rem 1rem;
+  border-radius: 40px;
+  margin-right: 0;
+}
+
+nav .logout:hover {
+  color: #ffe0e0;
+  background: rgba(220, 53, 69, 0.22);
+}
+
+nav .logout::after {
+  display: none;
+}
+
+/* welcome heading */
+.container > h1 {
+  font-size: 2.2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  background: linear-gradient(115deg, #0a2640 0%, #1d4a76 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+/* card redesign — spacious, airy, premium */
 .card {
-  background: white;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 1.25rem;
-  margin-bottom: 1.25rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  background: #ffffff;
+  border: none;
+  border-radius: 28px;
+  padding: 2rem;
+  margin-bottom: 0;
+  box-shadow: 0 8px 28px -6px rgba(0, 0, 0, 0.05), 0 1px 1px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s ease;
 }
+
+.card:hover {
+  box-shadow: 0 20px 35px -12px rgba(10, 38, 64, 0.12);
+}
+
+.card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0a2640;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.3px;
+}
+
+.card p {
+  margin-bottom: 1rem;
+}
+
+.card p:last-of-type {
+  margin-bottom: 0;
+}
+
+/* button system — refined, modern */
+.btn {
+  display: inline-block;
+  padding: 0.7rem 1.6rem;
+  border: none;
+  border-radius: 48px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  letter-spacing: -0.2px;
+}
+
+.btn-primary {
+  background: #1a4c7a;
+  color: white;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.btn-primary:hover {
+  background: #0e3a5e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px -6px rgba(26, 76, 122, 0.3);
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #bb2d3b;
+  transform: translateY(-1px);
+}
+
+.btn-warning {
+  background: #ffc107;
+  color: #1e2f3e;
+}
+
+.btn-warning:hover {
+  background: #e0aa00;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+}
+
+/* table styling — clean, executive */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
 }
-th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #dee2e6; }
-th { background: #f1f3f5; }
-.alert { padding: 1rem; margin: 1rem 0; border-radius: 6px; }
-.alert-danger  { background: #f8d7da; color: #721c24; }
-.alert-success { background: #d4edda; color: #155724; }
-form { display: grid; gap: 1rem; max-width: 500px; }
+
+th, td {
+  padding: 1rem 1.2rem;
+  text-align: left;
+  border-bottom: 1px solid #eef2f6;
+}
+
+th {
+  background: #f8fafc;
+  font-weight: 600;
+  color: #1a4c7a;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background: #fafcff;
+}
+
+/* alert system — softer, modern */
+.alert {
+  padding: 1rem 1.3rem;
+  margin: 1.2rem 0;
+  border-radius: 18px;
+  font-weight: 500;
+  border-left: 4px solid transparent;
+}
+
+.alert-danger {
+  background: #fef2f2;
+  color: #9b2c2c;
+  border-left-color: #dc3545;
+}
+
+.alert-success {
+  background: #effaf3;
+  color: #1f7840;
+  border-left-color: #28a745;
+}
+
+/* form elements — premium touch */
+form {
+  display: grid;
+  gap: 1.3rem;
+  max-width: 540px;
+  background: white;
+  padding: 0;
+}
+
 input, select, textarea {
-  padding: 0.7rem;
-  border: 1px solid #ced4da;
-  border-radius: 5px;
-  font-size: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  background: #ffffff;
 }
-.logout { color: #dc3545; font-weight: bold; }
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #1a4c7a;
+  box-shadow: 0 0 0 3px rgba(26, 76, 122, 0.08);
+}
+
+label {
+  font-weight: 500;
+  color: #1e3a5f;
+  margin-bottom: -0.5rem;
+}
+
+/* logout link special (in header already handled, but keeping your class) */
+.logout {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+/* extra polish for quick actions layout inside card */
+.card p .btn {
+  min-width: 180px;
+  text-align: center;
+}
+
+/* responsive tweaks */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.2rem;
+  }
+  
+  header .container {
+    flex-direction: column;
+    gap: 0.8rem;
+    text-align: center;
+  }
+  
+  nav a {
+    margin: 0 0.8rem;
+  }
+  
+  .card {
+    padding: 1.5rem;
+  }
+  
+  .container > h1 {
+    font-size: 1.8rem;
+  }
+  
+  th, td {
+    padding: 0.75rem;
+  }
+}
+
+/* subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #eef2f6;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbdbe0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9aa9bb;
+}
