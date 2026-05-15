@@ -1,5 +1,5 @@
 const app = document.getElementById("app");
-const API_BASE = "https://instantdating.onrender.com";
+const API_BASE = "https://instantdating.onrender.com/api";
 
 async function apiFetch(endpoint, options = {}) {
   const res = await fetch(`${API_BASE}${endpoint}`, options); 
