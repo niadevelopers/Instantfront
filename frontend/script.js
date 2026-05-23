@@ -1,6 +1,10 @@
 const app = document.getElementById("app");
 const API_BASE = "https://instantdating.onrender.com/api";
 
+
+// Check server status anytime (optional)
+console.log('Server ready:', window.SmartWake ? 'Wake system active' : 'Not loaded');
+
 async function apiFetch(endpoint, options = {}) {
   const res = await fetch(`${API_BASE}${endpoint}`, options); 
   const data = await res.json();
@@ -10,7 +14,10 @@ async function apiFetch(endpoint, options = {}) {
   }
 
   return data;
-}
+
+
+
+  
 
 
 const PLANS = {
